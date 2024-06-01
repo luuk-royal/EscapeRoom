@@ -1,6 +1,7 @@
 #include <TM1638plus.h>
 #include <LiquidCrystal_I2C.h>
-#include <pitches.h>
+#include "ButtonWrapper.h"
+#include "Music.h"
 
 #define STB 13
 #define CLK 12
@@ -20,20 +21,9 @@
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 TM1638plus tm(STB, CLK, DIO);
+ButtonWrapper buttons(tm);
 
 int lastMilis = 0;
-
-// main soundtrack
-int melody[] = { NOTE_A4, NOTE_A5, NOTE_G5, NOTE_E5, NOTE_F5, NOTE_E5, NOTE_G5, NOTE_C5, NOTE_A4, NOTE_G4, NOTE_A4, NOTE_C5, NOTE_C5, NOTE_A4, NOTE_C5, NOTE_G5, NOTE_F5, NOTE_E5, NOTE_G5, NOTE_E5, NOTE_D5, NOTE_C5, NOTE_B4, NOTE_A4, NOTE_A4, NOTE_A5, NOTE_G5, NOTE_E5, NOTE_G5, NOTE_C5, NOTE_A4, NOTE_G4, NOTE_A4, NOTE_C5, NOTE_C5, NOTE_G5, NOTE_F5, NOTE_E5, NOTE_C5, NOTE_A4, NOTE_G4};
-int noteLength[] = {250,  375,     1000,    125,     125,     250,     375,     500,     125,     125,     250,     750,     125,     125,     125,     750,     500,     250,     250,     250,     250,     250,     250,     750,     500,     500,     500,     250,     250,     500,     125,     125,     250,     750,     500,     500,     500,     250,     1250,    250,    250};
-int length = sizeof(melody) / sizeof(melody[0]);
-
-// Make the music timing work;
-int toneTimeStamp = 0;
-int toneDuration = 0;
-
-// Keep track of the current tone
-int currentToneIndex = 0;
 
 enum escapeRoomStatus {
   inMap = 0,
@@ -45,26 +35,26 @@ enum escapeRoomStatus {
   endingScreen = 6
 };
 
-byte status = 0;
+byte status = 5;
 bool started = false;
 
-bool enabledButtons[] = {
-  true,
-  false,
-  false,
-  false,
-  false,
-  false,
-  false,
-  false
+// https://forum.arduino.cc/t/explaination-of-struct/676032/9
+// Store the players location in a struct for easy acces, comparisons and updates
+struct PlayerLocation {
+  public:
+    int x;
+    int y;
 };
 
 void startEscapeRoom() {
+  Serial.println("In startEscapeRoom!");
   status = 0;
+  // mapSetup();
 }
 
 // The idea for making the functions the buttons call modular came from here:
 // https://codereview.stackexchange.com/questions/210356/improvement-for-stdmap-int-run-some-function-double-dispatch
+// https://stackoverflow.com/questions/52934718/c-calling-functions-from-an-array-of-function-pointers
 std::function<void()> buttonFunctions[] = {
   startEscapeRoom
 };
@@ -84,20 +74,14 @@ void setup(void)
   lcd.print("4-bytes-saga");
   lcd.setCursor(5, 1);
   lcd.print(">Start");
-  // lcd.createChar(0, menuBlock);
-  // lcd.setCursor(0, 0);
-  // lcd.write(0);
-  // delay(1000);
-  // lcd.createChar(0, customChar);
-  // lcd.setCursor(0, 1);
-  // lcd.write(0);
 }
 
 void loop() {
-  readTMButtons (enabledButtons, buttonFunctions);
+  // readTMButtons (enabledButtons, buttonFunctions);
   // put your main code here, to run repeatedly:
 
   // music();
+  buttons.updateButtons();
 
   // Serial.println((int) tm.readButtons());
   // delay(500);
@@ -106,9 +90,10 @@ void loop() {
 
   switch (status) {
     case startingScreen:
-    // Do nothing
+      // wait for the first button to be pressed
+    break;
     case inMap:
-    Serial.println("inMap");
+      // updateMap();
     break;
   }
 
@@ -124,47 +109,6 @@ void loop() {
   // }
 
   
-}
-
-void music(){
-
-  if (millis() - toneTimeStamp > toneDuration) {
-    toneTimeStamp = millis();
-    toneDuration = noteLength[currentToneIndex];
-    tone(BUZZER, melody[currentToneIndex], toneDuration);
-
-    if (currentToneIndex >= (length - 1) ) {
-      currentToneIndex = 0;
-    } else {
-      currentToneIndex++;
-    }
-  }
-
-  // if (millis() - toneTimeStamp > toneDuration) {
-  //   toneTimeStamp = millis();
-  //   switch (currentTone){
-  //     case 0:
-  //       toneDuration = 400;
-  //       tone(BUZZER, NOTE_B0, toneDuration);
-  //       currentTone++;
-  //       break;
-  //     case 1:
-  //       toneDuration = 500;
-  //       tone(BUZZER, NOTE_B1, toneDuration);
-  //       currentTone++;
-  //       break;
-  //     case 2:
-  //       toneDuration = 200;
-  //       tone(BUZZER, NOTE_GS3, toneDuration);
-  //       currentTone++;
-  //       break;
-  //     case 3:
-  //       toneDuration = 300;
-  //       tone(BUZZER, NOTE_G3, toneDuration);
-  //       currentTone = 0;
-  //       break;
-  //   }
-  // }
 }
 
 byte leftMap[] = {
@@ -189,6 +133,9 @@ byte rightMap[] = {
   0B11111
 };
 
+// Change player map to X,Y coordinate. then check X,Y coordinate against minigames on moving, else draw character
+// Put player in event map, kopie map halves into arrays and draw player
+
 // Map with the events
 int eventMap[][10] = {
   {1,1,1,1,1,1,1,1,1,1},
@@ -201,15 +148,15 @@ int eventMap[][10] = {
   {1,1,1,1,1,1,1,1,1,1}
 };
 
-// Keep track of the player
+// Map with the events
 int playerMap[][10] = {
   {1,1,1,1,1,1,1,1,1,1},
-  {1,0,0,0,2,0,0,0,0,1},
+  {1,0,0,2,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,4,0,1},
+  {1,0,3,0,0,0,0,0,0,1},
   {1,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,1},
+  {1,0,0,5,0,0,0,0,0,1},
+  {1,0,0,0,0,6,0,0,0,1},
   {1,1,1,1,1,1,1,1,1,1}
 };
 
@@ -239,15 +186,21 @@ void updateMap() {
     0B11111
   };
 
+  // Byte shifting
+  // https://www.geeksforgeeks.org/left-shift-right-shift-operators-c-cpp/
+
   // Run through the left side of the map to check for player position and for special rooms
   for(int i=0; i < 8; i++) {
     for(int j = 0; j < 5; j++) {
       // Once the player has been found exit out of this function
+      // i is the Y row of the map, j is the X row of the map
       if (playerMap[i][j] == 2) {
-        byte temp = 0B1;
-        temp << j;
+        int temp = 1;
+        temp <<= j;
         temp += 1;
-        temp << (5-j);
+        if (4-j > 0) {
+          temp << (4-j);
+        }
 
         tempLeftMap[i] = temp;
 
@@ -259,15 +212,14 @@ void updateMap() {
     } 
   }
 
-  // Run through the left side of the map to check for player position and for special rooms
+  // Run through the right side of the map to check for player position and for special rooms
   for(int i=0; i < 8; i++) {
-    for(int j = 0; j < 5; j++) {
+    for(int j = 5; j < 9; j++) {
       // Once the player has been found exit out of this function
       if (playerMap[i][j] == 2) {
-        byte temp = 1;
-        temp << j;
+        int temp = 1;
+        temp <<= (9 - j);
         temp += 1;
-        temp << (5-j);
 
         tempRightMap[i] = temp;
 
@@ -281,9 +233,11 @@ void updateMap() {
 }
 
 void mapSetup() {
+  // TODO: write other 6 blocks here:
+  lcd.clear();
   lcd.createChar(0, leftMap);
   lcd.createChar(1, rightMap);
-  lcd.setCursor(0, 0);
+  lcd.setCursor(5, 1);
   lcd.write(0);
   lcd.write(1);
 }
@@ -293,6 +247,45 @@ void displayUpdate(byte left[], byte right[]) {
   lcd.createChar(0, left);
   lcd.createChar(1, right);
   lcd.setCursor(0, 0);
+}
+
+// https://forum.arduino.cc/t/return-struct-from-a-function/277071
+// struct PlayerLocation findPlayer() {
+//   PlayerLocation returnLocation;
+
+//   // The first and last row (0 and 7) will always be one and the player CAN NEVER be there. So we do not check for them there.
+//   for(int i=1; i < 7; i++) {
+//     // The first and last horizontal place are walls and can not contain the player
+//     for(int j = 1; j < 9; j++) {
+//       // Once the player has been found exit out of this function
+//       if (playerMap[i][j] == 2) {
+//         // i is the Y row of the map, j is the X row of the map
+//         returnLocation.y = i;
+//         returnLocation.x = j;
+
+//         return returnLocation;
+//       }
+//     }
+//   }
+
+//   // It should never reach this
+//   return returnLocation;
+// }
+
+void moveLeft() {
+
+}
+
+void moveRight() {
+
+}
+
+void moveUp() {
+
+}
+
+void moveDown() {
+
 }
 
 // Stupid af bitmath
@@ -305,34 +298,45 @@ void displayUpdate(byte left[], byte right[]) {
 #define seventhButton 64
 #define eigthButton 128
 
+// TODO:
+// Wrapper class in CPP around buttons and depending on what i want to do with the buttons react.
+// Event based -> debounce and fire event based on pressed button
+// State enter game 1 -> wrapper class checks and debounces button -> save button state
+
+// ButtonWrapper class
+// UpdateButtons -> reads, debounces and updates internal state
+// GetButtonsState -> returns struct of pressed buttons
+// GetButtonState(buttonId) -> return one specific button
+
 // Bind enabled buttons and their respective functions to the buttons
 void readTMButtons(bool enabled[], std::function<void()> functions[]) {
   int buttonData = tm.readButtons(); // Lees de gecombineerde waarde van alle ingedrukte knoppen
 
-  // Controleer elke knop afzonderlijk
-  if (buttonData & firstButton & enabled[0]) {
-    // Eerste knop is ingedrukt
+  // Check every button serperately and call the related function
+  if (buttonData & firstButton && enabled[0]) {
+    // https://cplusplus.com/forum/beginner/4639/#:~:text=Yeah%2C%20you%20totally%20can.
+    functions[0]();
   }
-  if (buttonData & secondButton & enabled[1]) {
-    // Tweede knop is ingedrukt
+  if (buttonData & secondButton && enabled[1]) {
+    functions[1]();
   }
-  if (buttonData & thirdButton & enabled[2]) {
-    // Derde knop is ingedrukt
+  if (buttonData & thirdButton && enabled[2]) {
+    functions[2]();
   }
-  if (buttonData & fourthButton & enabled[3]) {
-    // Derde knop is ingedrukt
+  if (buttonData & fourthButton && enabled[3]) {
+    functions[3]();
   }
-  if (buttonData & fifthButton & enabled[4]) {
-    // Derde knop is ingedrukt
+  if (buttonData & fifthButton && enabled[4]) {
+    functions[4]();
   }
-  if (buttonData & sixthButton & enabled[5]) {
-    // Derde knop is ingedrukt
+  if (buttonData & sixthButton && enabled[5]) {
+    functions[5]();
   }
-  if (buttonData & seventhButton & enabled[6]) {
-    // Derde knop is ingedrukt
+  if (buttonData & seventhButton && enabled[6]) {
+    functions[6]();
   }
-  if (buttonData & eigthButton & enabled[7]) {
-    // Derde knop is ingedrukt
+  if (buttonData & eigthButton && enabled[7]) {
+    functions[7]();
   }
 
 }
