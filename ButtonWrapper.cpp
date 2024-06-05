@@ -31,6 +31,11 @@ int lastStateSeven;
 int lastStateEight;
 
 
+// ButtonWrapper class
+// UpdateButtons -> reads, debounces and updates internal state
+// GetButtonsState -> returns struct of pressed buttons
+// GetButtonState(buttonId) -> return one specific button
+
 ButtonWrapper::ButtonWrapper(TM1638plus &tm) : tm(tm) {
 }
 

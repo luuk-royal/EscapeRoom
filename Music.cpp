@@ -13,16 +13,21 @@ int toneDuration = 0;
 // Keep track of the current tone
 int currentToneIndex = 0;
 
+Music::Music(int port)
+{
+    buzzer = port;
+}
+
 void Music::PlayMusic()
 {
     if (millis() - toneTimeStamp > toneDuration) {
-        switch (expression)
+        switch (currentTrack)
         {
         default: // Put the default at the first track since the first track is the default
         case 1:
             toneTimeStamp = millis();
             toneDuration = noteLengthTrackOne[currentToneIndex];
-            tone(BUZZER, melodyOne[currentToneIndex], toneDuration);
+            tone(buzzer, melodyOne[currentToneIndex], toneDuration);
 
             if (currentToneIndex >= (lengthOne - 1) ) {
             currentToneIndex = 0;
@@ -36,7 +41,7 @@ void Music::PlayMusic()
             // Change this to a second theme
             toneTimeStamp = millis();
             toneDuration = noteLengthTrackOne[currentToneIndex];
-            tone(BUZZER, melodyOne[currentToneIndex], toneDuration);
+            tone(buzzer, melodyOne[currentToneIndex], toneDuration);
 
             if (currentToneIndex >= (lengthOne - 1) ) {
             currentToneIndex = 0;
@@ -50,7 +55,7 @@ void Music::PlayMusic()
             // Change this to the final boss theme
             toneTimeStamp = millis();
             toneDuration = noteLengthTrackOne[currentToneIndex];
-            tone(BUZZER, melodyOne[currentToneIndex], toneDuration);
+            tone(buzzer, melodyOne[currentToneIndex], toneDuration);
 
             if (currentToneIndex >= (lengthOne - 1) ) {
             currentToneIndex = 0;
@@ -75,31 +80,31 @@ void Music::ResetMusic()
 }
 
 
-void music(){
+// void music(){
 
   // if (millis() - toneTimeStamp > toneDuration) {
   //   toneTimeStamp = millis();
   //   switch (currentTone){
   //     case 0:
   //       toneDuration = 400;
-  //       tone(BUZZER, NOTE_B0, toneDuration);
+  //       tone(buzzer, NOTE_B0, toneDuration);
   //       currentTone++;
   //       break;
   //     case 1:
   //       toneDuration = 500;
-  //       tone(BUZZER, NOTE_B1, toneDuration);
+  //       tone(buzzer, NOTE_B1, toneDuration);
   //       currentTone++;
   //       break;
   //     case 2:
   //       toneDuration = 200;
-  //       tone(BUZZER, NOTE_GS3, toneDuration);
+  //       tone(buzzer, NOTE_GS3, toneDuration);
   //       currentTone++;
   //       break;
   //     case 3:
   //       toneDuration = 300;
-  //       tone(BUZZER, NOTE_G3, toneDuration);
+  //       tone(buzzer, NOTE_G3, toneDuration);
   //       currentTone = 0;
   //       break;
   //   }
   // }
-}
+// }

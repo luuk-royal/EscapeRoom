@@ -7,11 +7,13 @@
 class Music
 {
 public:
+    Music(int port);
     void PlayMusic();
     void SwitchTrack(int trackId);
     void ResetMusic();
 private:
-    int currentTrack
-}
+    int currentTrack;
+    int buzzer;
+};
 
 #endif // MUSIC_WRAPPER_H
