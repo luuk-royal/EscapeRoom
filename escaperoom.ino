@@ -102,40 +102,4 @@ void loop() {
       status = inMap;
       break;
   }
-
-  // tm.reset();
-  // for (int i = 0; i < 8; i++) {
-  //   tm.setLED(i, 1);
-  //   delay(200);
-  // }
-
-  // for (int j = 7; j >= 0; j--) {
-  //   tm.setLED(j, 0);
-  //   delay(200);
-  // }
-
-  
 }
-
-// https://forum.arduino.cc/t/return-struct-from-a-function/277071
-// struct PlayerLocation findPlayer() {
-//   PlayerLocation returnLocation;
-
-//   // The first and last row (0 and 7) will always be one and the player CAN NEVER be there. So we do not check for them there.
-//   for(int i=1; i < 7; i++) {
-//     // The first and last horizontal place are walls and can not contain the player
-//     for(int j = 1; j < 9; j++) {
-//       // Once the player has been found exit out of this function
-//       if (playerMap[i][j] == 2) {
-//         // i is the Y row of the map, j is the X row of the map
-//         returnLocation.y = i;
-//         returnLocation.x = j;
-
-//         return returnLocation;
-//       }
-//     }
-//   }
-
-//   // It should never reach this
-//   return returnLocation;
-// }
