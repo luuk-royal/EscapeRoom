@@ -67,15 +67,16 @@ void BalanceGame::run()
         gameDone();
         // Cancel about the loop
         return;
-    }
-    
+    }    
 
     int sensorValue = analogRead(POTMETER);
-    // The maximum sensor value was detected to be 140 so clamp the values to 140
     int mappedValue = map(sensorValue, 0, 1023, -1, 1);
 
     unsigned long currentTime = millis();
-    if (currentTime - lastMoveTime > 500) {  // Move the LED every 500 milliseconds
+    // difficulty does not go under 0.5 seconds since it is already extremely easy to fail this minigame with the LED positions changing every 0.5 seconds
+    unsigned long moveInterval = (timePlayed <= 5000) ? 1000 : 500;
+
+    if ((currentTime - lastMoveTime) > moveInterval) {  // Move the LED every 500 milliseconds
         currentLed += mappedValue;
         if (currentLed > 3) currentLed = 3;
         if (currentLed < -3) currentLed = -3;
