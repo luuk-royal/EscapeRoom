@@ -65,17 +65,10 @@ void setup(void)
 }
 
 void loop() {
-  // readTMButtons (enabledButtons, buttonFunctions);
-  // put your main code here, to run repeatedly:
-
-  // music();
   buttons.updateButtons();
   // music.PlayMusic();
 
-  // Serial.println((int) tm.readButtons());
-  // delay(500);
 
-  // tm.setLED(0, 1);
   ButtonState buttonState = buttons.getButtonsState();
 
   switch (status) {
