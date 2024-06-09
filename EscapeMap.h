@@ -19,15 +19,15 @@ class EscapeMap
 {
 public:
     EscapeMap(LiquidCrystal_I2C &lcd, ButtonWrapper &buttons, EscapeRoomStatus &status, GamesDone &gamesDone);
-    void Setup();
-    void Run();
-    void UpdateMap();
+    void setup();
+    void run();
+    void updateMap();
 private:
-    void DisplayUpdate(byte left[], byte right[], int playerMapLocation);
-    void MoveLeft();
-    void MoveRight();
-    void MoveUp();
-    void MoveDown();
+    void displayUpdate(byte left[], byte right[], int playerMapLocation);
+    void moveLeft();
+    void moveRight();
+    void moveUp();
+    void moveDown();
 
     PlayerLocation playerLocation;
     LiquidCrystal_I2C &lcd;

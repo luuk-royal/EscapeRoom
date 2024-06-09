@@ -28,7 +28,7 @@ BalanceGame::BalanceGame(
     lastTimed(0)
 {}
 
-void BalanceGame::SetUp()
+void BalanceGame::setUp()
 {
     pinMode(POTMETER, INPUT);
     pinMode(LED_RRR, OUTPUT);
@@ -40,7 +40,7 @@ void BalanceGame::SetUp()
     pinMode(LED_RLL, OUTPUT);
 }
 
-void BalanceGame::Run()
+void BalanceGame::run()
 {
     if (startingTime == -1)
     {
@@ -64,7 +64,7 @@ void BalanceGame::Run()
     // Game lasts 20 seconds
     if (timePlayed > 20000)
     {
-        GameDone();
+        gameDone();
         // Cancel about the loop
         return;
     }
@@ -93,7 +93,7 @@ void BalanceGame::Run()
     switch (currentLed) {
         case -3:
             digitalWrite(LED_RLL, HIGH);
-            GameFailed();
+            gameFailed();
             break;
         case -2:
             digitalWrite(LED_RL, HIGH);
@@ -112,12 +112,12 @@ void BalanceGame::Run()
             break;
         case 3:
             digitalWrite(LED_RRR, HIGH);
-            GameFailed();
+            gameFailed();
             break;
     }
 }
 
-void BalanceGame::GameFailed()
+void BalanceGame::gameFailed()
 {
     // Reset game values
     startingTime = -1;
@@ -130,7 +130,7 @@ void BalanceGame::GameFailed()
     lcd.print(0);
 }
 
-void BalanceGame::GameDone() {
+void BalanceGame::gameDone() {
     // Set all pins to low
     digitalWrite(LED_RRR, LOW);
     digitalWrite(LED_RR, LOW);

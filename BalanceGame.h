@@ -22,8 +22,8 @@ public:
         GamesDone &gamesDone,
         LiquidCrystal_I2C &lcd
     );
-    void SetUp();
-    void Run();
+    void setUp();
+    void run();
 private:
     int POTMETER;
     int LED_RRR;
@@ -40,9 +40,10 @@ private:
     EscapeRoomStatus &status;
     GamesDone &gamesDone;
     LiquidCrystal_I2C &lcd;
+    int startTimer;
 
-    void GameFailed();
-    void GameDone();
+    void gameFailed();
+    void gameDone();
 };
 
 #endif // BALANCE_GAME_H

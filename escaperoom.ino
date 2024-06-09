@@ -5,6 +5,7 @@
 #include "Music.h"
 #include "EscapeMap.h"
 #include "BalanceGame.h"
+#include "WhackAMole.h"
 
 #define STB 13
 #define CLK 12
@@ -34,14 +35,15 @@ ButtonWrapper buttons(tm);
 Music music(BUZZER);
 EscapeMap escapeMap(lcd, buttons, status, gamesDone);
 BalanceGame gameOne(POTMETER, LED_RRR, LED_RR, LED_GR, LED_YC, LED_GL, LED_RL, LED_RLL, status, gamesDone, lcd);
+WhackAMole gameTwo(tm, buttons, status, gamesDone);
 
 void startEscapeRoom() {
   Serial.println("In startEscapeRoom!");
   status = inMap;
-  escapeMap.Setup();
+  escapeMap.setup();
 
   // Run the updateMap manually as the map itself only updates on movement.
-  escapeMap.UpdateMap();
+  escapeMap.updateMap();
 }
 
 void setup(void)
@@ -51,7 +53,6 @@ void setup(void)
   tm.displayBegin();
     
   lcd.init();
-  delay(500);
   lcd.backlight();
   lcd.clear();
   lcd.setCursor(2, 0);
@@ -60,7 +61,7 @@ void setup(void)
   lcd.print(">Start");
   
   // Setup game one
-  gameOne.SetUp();
+  gameOne.setUp();
 }
 
 void loop() {
@@ -69,7 +70,7 @@ void loop() {
 
   // music();
   buttons.updateButtons();
-  music.PlayMusic();
+  // music.PlayMusic();
 
   // Serial.println((int) tm.readButtons());
   // delay(500);
@@ -86,11 +87,19 @@ void loop() {
 
     break;
     case inMap:
-      escapeMap.Run();
-      
+      escapeMap.run();
       break;
     case inGame1:
-      gameOne.Run();
+      gameOne.run();
+      break;
+    case inGame2:
+      gameTwo.run();
+      break;
+    case inGame3:
+      status = inMap;
+      break;
+    case inGame4:
+      status = inMap;
       break;
   }
 

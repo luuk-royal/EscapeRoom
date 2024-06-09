@@ -4,15 +4,25 @@
 
 #include <Arduino.h>
 #include <TM1638plus.h>
+#include "EscapeRoomStatus.h"
+#include "ButtonWrapper.h"
 
 class WhackAMole
 {
 public:
-    WhackAMole(TM1638plus &tm);
-    void SetUp();
-    void Run();
+    WhackAMole(TM1638plus &tm, ButtonWrapper &buttons, EscapeRoomStatus &status, GamesDone &gamesDone);
+    void run();
 private:
-    TM1638plus &tm; // Reference to the TM1638plus object
+    int difficultyLevel;
+    int points;
+
+    TM1638plus &tm;
+    ButtonWrapper &buttons;
+    EscapeRoomStatus &status;
+    GamesDone &gamesDone;
+
+    void gameDone();
+    int randomCooldown();
 };
 
 #endif // WHACKAMOLE_H

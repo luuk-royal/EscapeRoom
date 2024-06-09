@@ -3,16 +3,16 @@
 EscapeMap::EscapeMap(LiquidCrystal_I2C &lcd, ButtonWrapper &buttons, EscapeRoomStatus &status, GamesDone &gamesDone) 
     : lcd(lcd), buttons(buttons), status(status), gamesDone(gamesDone), playerLocation({5, 2}) {}
 
-void EscapeMap::Setup()
+void EscapeMap::setup()
 {
-    // The players starting location is ALWAYS (5,2)
-    playerLocation.x = 5;
-    playerLocation.y = 2;
+    // The players starting location is ALWAYS (4,1)
+    playerLocation.x = 4;
+    playerLocation.y = 1;
 
     lastPlayerMovement = millis();
 }
 
-void EscapeMap::Run()
+void EscapeMap::run()
 {
   // Debug stub for player movement:
   // Serial.print("x: ");
@@ -29,22 +29,22 @@ void EscapeMap::Run()
     // Only do something if a button is being pressed, ignore all other inputs outside of the first one found
     if (buttonState.buttonOnePressed)
     {
-      MoveLeft();
+      moveLeft();
     } else if (buttonState.buttonTwoPressed)
     {
-      MoveRight();
+      moveRight();
     } else if (buttonState.buttonThreePressed)
     {
-      MoveUp();
+      moveUp();
     } else if (buttonState.buttonFourPressed)
     {
-      MoveDown();
+      moveDown();
     }
-    UpdateMap();
+    updateMap();
   }
 }
 
-void EscapeMap::UpdateMap() {
+void EscapeMap::updateMap() {
   // Create the two map parts and add the player to the map half using the player location.
   // Also check if player has entered an event tile, if so give the player the ability to enter the game.
   
@@ -95,11 +95,11 @@ void EscapeMap::UpdateMap() {
   }
 
   // reassign the map
-  DisplayUpdate(tempLeftMap, tempRightMap, playerMapLocation);
+  displayUpdate(tempLeftMap, tempRightMap, playerMapLocation);
 }
 
 // put back the characters in the memory, switch back to the proper memory and rewrite the map
-void EscapeMap::DisplayUpdate(byte mapLeft[], byte mapRight[], int playerMapLocation) {
+void EscapeMap::displayUpdate(byte mapLeft[], byte mapRight[], int playerMapLocation) {
   // The minimap was made first so it retains the 0 and 1 character positions respectively
   lcd.createChar(0, mapLeft);
   lcd.createChar(1, mapRight);
@@ -139,7 +139,7 @@ void EscapeMap::DisplayUpdate(byte mapLeft[], byte mapRight[], int playerMapLoca
   lcd.write(1);
 }
 
-void EscapeMap::MoveLeft() {
+void EscapeMap::moveLeft() {
     int x = playerLocation.x;
 
     if (eventMap[playerLocation.y][x - 1] != 1) {
@@ -155,7 +155,7 @@ void EscapeMap::MoveLeft() {
     }
 }
 
-void EscapeMap::MoveRight() {
+void EscapeMap::moveRight() {
     int x = playerLocation.x;
 
     if (eventMap[playerLocation.y][x + 1] != 1) {
@@ -171,7 +171,7 @@ void EscapeMap::MoveRight() {
     }
 }
 
-void EscapeMap::MoveUp() {
+void EscapeMap::moveUp() {
     int y = playerLocation.y;
 
     if (eventMap[y - 1][playerLocation.x] != 1) {
@@ -187,7 +187,7 @@ void EscapeMap::MoveUp() {
     }
 }
 
-void EscapeMap::MoveDown() {
+void EscapeMap::moveDown() {
     int y = playerLocation.y;
 
     if (eventMap[y + 1][playerLocation.x] != 1) {
