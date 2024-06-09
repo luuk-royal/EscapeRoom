@@ -12,4 +12,12 @@ enum EscapeRoomStatus {
   endingScreen = 6
 };
 
+struct GamesDone
+{
+  bool gameOneDone = false;
+  bool gameTwoDone = false;
+  bool gameThreeDone = false;
+  bool gameFourDone = false;
+};
+
 #endif // ESCAPE_ROOM_STATUS_H

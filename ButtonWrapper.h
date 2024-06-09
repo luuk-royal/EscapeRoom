@@ -26,10 +26,11 @@ class ButtonWrapper
 public:
   ButtonWrapper(TM1638plus &tm);
   void updateButtons();
-  struct ButtonState getButtonsState();
+  ButtonState getButtonsState();
   bool getButtonState(int buttonId);
 private:
   TM1638plus &tm; // Reference to the TM1638plus object
+  ButtonState buttonState;
 };
 
 #endif // BUTTON_WRAPPER_H

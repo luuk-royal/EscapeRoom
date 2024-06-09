@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
 #include "EscapeRoomStatus.h"
+#include "ButtonWrapper.h"
 
 // https://forum.arduino.cc/t/explaination-of-struct/676032/9
 // Store the players location in a struct for easy acces, comparisons and updates
@@ -17,12 +18,12 @@ struct PlayerLocation {
 class EscapeMap 
 {
 public:
-    Map(LiquidCrystal_I2C &lcd, ButtonWrapper &buttons, EscapeRoomStatus &status);
+    EscapeMap(LiquidCrystal_I2C &lcd, ButtonWrapper &buttons, EscapeRoomStatus &status, GamesDone &gamesDone);
     void Setup();
     void Run();
-private:
     void UpdateMap();
-    void DisplayUpdate(byte left[], byte right[]);
+private:
+    void DisplayUpdate(byte left[], byte right[], int playerMapLocation);
     void MoveLeft();
     void MoveRight();
     void MoveUp();
@@ -32,6 +33,8 @@ private:
     LiquidCrystal_I2C &lcd;
     ButtonWrapper &buttons;
     EscapeRoomStatus &status;
+    GamesDone &gamesDone;
+    int lastPlayerMovement;
 
     int eventMap[8][10] = {
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -143,6 +146,6 @@ private:
         0B01010,
         0B10001
     };
-}
+};
 
 #endif // ESCAPE_MAP_WRAPPER_H

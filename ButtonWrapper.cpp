@@ -1,5 +1,4 @@
 #include "ButtonWrapper.h"
-#include <TM1638plus.h>
 
 #define firstButton 1
 #define secondButton 2
@@ -10,8 +9,6 @@
 #define seventhButton 64
 #define eighthButton 128
 
-struct ButtonState buttonState;
-
 int buttonOnePressedOn = 0;
 int buttonTwoPressedOn = 0;
 int buttonThreePressedOn = 0;
@@ -21,14 +18,14 @@ int buttonSixPressedOn = 0;
 int buttonSevenPressedOn = 0;
 int buttonEightPressedOn = 0;
 
-int lastStateOne;
-int lastStateTwo;
-int lastStateThree;
-int lastStateFour;
-int lastStateFive;
-int lastStateSix;
-int lastStateSeven;
-int lastStateEight;
+bool lastStateOne = false;
+bool lastStateTwo = false;
+bool lastStateThree = false;
+bool lastStateFour = false;
+bool lastStateFive = false;
+bool lastStateSix = false;
+bool lastStateSeven = false;
+bool lastStateEight = false;
 
 
 // ButtonWrapper class
@@ -40,77 +37,82 @@ ButtonWrapper::ButtonWrapper(TM1638plus &tm) : tm(tm) {
 }
 
 void ButtonWrapper::updateButtons() {
-    int buttonData = tm.readButtons(); // Read the combined value of every button
+  int buttonData = tm.readButtons(); // Read the combined value of every button
 
-    // Mask each button's state
-    int readingOne = buttonData & firstButton;
-    int readingTwo = buttonData & secondButton;
-    int readingThree = buttonData & thirdButton;
-    int readingFour = buttonData & fourthButton;
-    int readingFive = buttonData & fifthButton;
-    int readingSix = buttonData & sixthButton;
-    int readingSeven = buttonData & seventhButton;
-    int readingEight = buttonData & eighthButton;
+  // Mask each button's state
+  bool readingOne = buttonData & firstButton;
+  bool readingTwo = buttonData & secondButton;
+  bool readingThree = buttonData & thirdButton;
+  bool readingFour = buttonData & fourthButton;
+  bool readingFive = buttonData & fifthButton;
+  bool readingSix = buttonData & sixthButton;
+  bool readingSeven = buttonData & seventhButton;
+  bool readingEight = buttonData & eighthButton;
 
-    // Update debounce timers if state changed
-    if (readingOne != lastStateOne) {
-        buttonOnePressedOn = millis();
-    }
-    if (readingTwo != lastStateTwo) {
-        buttonTwoPressedOn = millis();
-    }
-    if (readingThree != lastStateThree) {
-        buttonThreePressedOn = millis();
-    }
-    if (readingFour != lastStateFour) {
-        buttonFourPressedOn = millis();
-    }
-    if (readingFive != lastStateFive) {
-        buttonFivePressedOn = millis();
-    }
-    if (readingSix != lastStateSix) {
-        buttonSixPressedOn = millis();
-    }
-    if (readingSeven != lastStateSeven) {
-        buttonSevenPressedOn = millis();
-    }
-    if (readingEight != lastStateEight) {
-        buttonEightPressedOn = millis();
-    }
+  // Update debounce timers if state changed
+  if (readingOne != lastStateOne) {
+      buttonOnePressedOn = millis();
+      lastStateOne = readingOne;
+  }
+  if (readingTwo != lastStateTwo) {
+      buttonTwoPressedOn = millis();
+      lastStateTwo = readingTwo;
+  }
+  if (readingThree != lastStateThree) {
+      buttonThreePressedOn = millis();
+      lastStateThree = readingThree;
+  }
+  if (readingFour != lastStateFour) {
+      buttonFourPressedOn = millis();
+      lastStateFour = readingFour;
+  }
+  if (readingFive != lastStateFive) {
+      buttonFivePressedOn = millis();
+      lastStateFive = readingFive;
+  }
+  if (readingSix != lastStateSix) {
+      buttonSixPressedOn = millis();
+      lastStateSix = readingSix;
+  }
+  if (readingSeven != lastStateSeven) {
+      buttonSevenPressedOn = millis();
+      lastStateSeven = readingSeven;
+  }
+  if (readingEight != lastStateEight) {
+      buttonEightPressedOn = millis();
+      lastStateEight = readingEight;
+  }
 
-    // Update the button states if the debounce period has passed
-    if ((millis() - buttonOnePressedOn) > 30) {
-        buttonState.buttonOnePressed = readingOne;
-        lastStateOne = readingOne;
-    }
-    if ((millis() - buttonTwoPressedOn) > 30) {
-        buttonState.buttonTwoPressed = readingTwo;
-        lastStateTwo = readingTwo;
-    }
-    if ((millis() - buttonThreePressedOn) > 30) {
-        buttonState.buttonThreePressed = readingThree;
-        lastStateThree = readingThree;
-    }
-    if ((millis() - buttonFourPressedOn) > 30) {
-        buttonState.buttonFourPressed = readingFour;
-        lastStateFour = readingFour;
-    }
-    if ((millis() - buttonFivePressedOn) > 30) {
-        buttonState.buttonFivePressed = readingFive;
-        lastStateFive = readingFive;
-    }
-    if ((millis() - buttonSixPressedOn) > 30) {
-        buttonState.buttonSixPressed = readingSix;
-        lastStateSix = readingSix;
-    }
-    if ((millis() - buttonSevenPressedOn) > 30) {
-        buttonState.buttonSevenPressed = readingSeven;
-        lastStateSeven = readingSeven;
-    }
-    if ((millis() - buttonEightPressedOn) > 30) {
-        buttonState.buttonEightPressed = readingEight;
-        lastStateEight = readingEight;
-    }
+  // Update the button states if the debounce period has passed
+  if ((millis() - buttonOnePressedOn) > 30) {
+      buttonState.buttonOnePressed = readingOne;
+  }
+  if ((millis() - buttonTwoPressedOn) > 30) {
+      buttonState.buttonTwoPressed = readingTwo;
+  }
+  if ((millis() - buttonThreePressedOn) > 30) {
+      buttonState.buttonThreePressed = readingThree;
+  }
+  if ((millis() - buttonFourPressedOn) > 30) {
+      buttonState.buttonFourPressed = readingFour;
+  }
+  if ((millis() - buttonFivePressedOn) > 30) {
+      buttonState.buttonFivePressed = readingFive;
+  }
+  if ((millis() - buttonSixPressedOn) > 30) {
+      buttonState.buttonSixPressed = readingSix;
+  }
+  if ((millis() - buttonSevenPressedOn) > 30) {
+      buttonState.buttonSevenPressed = readingSeven;
+  }
+  if ((millis() - buttonEightPressedOn) > 30) {
+      buttonState.buttonEightPressed = readingEight;
+  }
+
+  // Button debug
+  // Serial.print(lastStateOne);
+  // Serial.print(" ");
+  // Serial.println(buttonState.buttonOnePressed);
 }
 
 ButtonState ButtonWrapper::getButtonsState() 
@@ -118,7 +120,7 @@ ButtonState ButtonWrapper::getButtonsState()
   return buttonState;
 }
 
-bool isCompleted(int buttonId) {
+bool ButtonWrapper::getButtonState(int buttonId) {
   switch(buttonId) {
       case 1: return buttonState.buttonOnePressed;
       case 2: return buttonState.buttonTwoPressed;

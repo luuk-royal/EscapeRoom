@@ -4,6 +4,7 @@
 #include "ButtonWrapper.h"
 #include "Music.h"
 #include "EscapeMap.h"
+#include "BalanceGame.h"
 
 #define STB 13
 #define CLK 12
@@ -21,21 +22,26 @@
 #define BUZZER 10
 #define FREQUENCY 440
 
+int lastMilis = 0;
+EscapeRoomStatus status = startingScreen;
+bool started = false;
+
+GamesDone gamesDone;
+
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 TM1638plus tm(STB, CLK, DIO);
 ButtonWrapper buttons(tm);
 Music music(BUZZER);
-EscapeMap map(lcd, buttons, status);
-
-int lastMilis = 0;
-
-byte status = 5;
-bool started = false;
+EscapeMap escapeMap(lcd, buttons, status, gamesDone);
+BalanceGame gameOne(POTMETER, LED_RRR, LED_RR, LED_GR, LED_YC, LED_GL, LED_RL, LED_RLL, status, gamesDone, lcd);
 
 void startEscapeRoom() {
   Serial.println("In startEscapeRoom!");
-  status = 0;
-  map.Setup();
+  status = inMap;
+  escapeMap.Setup();
+
+  // Run the updateMap manually as the map itself only updates on movement.
+  escapeMap.UpdateMap();
 }
 
 void setup(void)
@@ -53,6 +59,8 @@ void setup(void)
   lcd.setCursor(5, 1);
   lcd.print(">Start");
   
+  // Setup game one
+  gameOne.SetUp();
 }
 
 void loop() {
@@ -75,17 +83,14 @@ void loop() {
       {
         startEscapeRoom();
       }
-      
 
     break;
     case inMap:
-      map.Run();
+      escapeMap.Run();
       
       break;
     case inGame1:
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("In game one");
+      gameOne.Run();
       break;
   }
 
