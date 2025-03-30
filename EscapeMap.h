@@ -19,7 +19,6 @@ class EscapeMap
 {
 public:
     EscapeMap(LiquidCrystal_I2C &lcd, ButtonWrapper &buttons, EscapeRoomStatus &status, GamesDone &gamesDone);
-    void setup();
     void run();
     void updateMap();
 private:
@@ -47,6 +46,8 @@ private:
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
     };
 
+    // Character maker:
+    // https://maxpromer.github.io/LCD-Character-Creator/
     byte leftMiniMap[8] = {
         0B11111,
         0B10000,

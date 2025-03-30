@@ -6,6 +6,7 @@
 #include "EscapeMap.h"
 #include "BalanceGame.h"
 #include "WhackAMole.h"
+#include "MazeGame.h"
 
 #define STB 13
 #define CLK 12
@@ -26,6 +27,10 @@
 int lastMilis = 0;
 EscapeRoomStatus status = startingScreen;
 bool started = false;
+// 5 minutes
+int totalTime = 300000;
+// Only start counting down once the startEscapeRoom function has been gone through
+int startingMillis = 0;
 
 GamesDone gamesDone;
 
@@ -36,14 +41,12 @@ Music music(BUZZER);
 EscapeMap escapeMap(lcd, buttons, status, gamesDone);
 BalanceGame gameOne(POTMETER, LED_RRR, LED_RR, LED_GR, LED_YC, LED_GL, LED_RL, LED_RLL, status, gamesDone, lcd);
 WhackAMole gameTwo(tm, buttons, status, gamesDone);
+MazeGame gameThree(lcd, buttons, status, gamesDone);
 
 void startEscapeRoom() {
-  Serial.println("In startEscapeRoom!");
+  // Serial.println("In startEscapeRoom!");
   status = inMap;
-  escapeMap.setup();
-
-  // Run the updateMap manually as the map itself only updates on movement.
-  escapeMap.updateMap();
+  startingMillis = millis();
 }
 
 void setup(void)
@@ -66,7 +69,7 @@ void setup(void)
 
 void loop() {
   buttons.updateButtons();
-  // music.PlayMusic();
+  music.PlayMusic();
 
 
   ButtonState buttonState = buttons.getButtonsState();
@@ -81,6 +84,16 @@ void loop() {
     break;
     case inMap:
       escapeMap.run();
+
+      // Time mechanic and game over mechanic
+      lcd.setCursor(10, 0);
+      lcd.print("time:");
+      lcd.setCursor(13, 1);
+      lcd.print((totalTime - (millis() - startingMillis)) / 1000);
+
+      if (((totalTime - (millis() - startingMillis)) / 1000) < 0) {
+        status = gameOverScreen;
+      }
       break;
     case inGame1:
       gameOne.run();
@@ -89,10 +102,21 @@ void loop() {
       gameTwo.run();
       break;
     case inGame3:
-      status = inMap;
+      gameThree.run();
       break;
-    case inGame4:
-      status = inMap;
+    case endingScreen:
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("You have won!");
+      lcd.setCursor(0, 1);
+      lcd.print("Time left:");
+      lcd.print((totalTime - (millis() - startingMillis)) / 1000);
+      break;
+    case gameOverScreen:
+      lcd.setCursor(0, 0);
+      lcd.print("You have ran out");
+      lcd.setCursor(0,1);
+      lcd.print("of time!");
       break;
   }
 }

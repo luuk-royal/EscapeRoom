@@ -1,15 +1,15 @@
 #include "EscapeMap.h"
 
-EscapeMap::EscapeMap(LiquidCrystal_I2C &lcd, ButtonWrapper &buttons, EscapeRoomStatus &status, GamesDone &gamesDone) 
-    : lcd(lcd), buttons(buttons), status(status), gamesDone(gamesDone), playerLocation({5, 2}) {}
-
-void EscapeMap::setup()
+EscapeMap::EscapeMap(LiquidCrystal_I2C &lcd, 
+ButtonWrapper &buttons, 
+EscapeRoomStatus &status, 
+GamesDone &gamesDone
+) : lcd(lcd), 
+buttons(buttons), 
+status(status), 
+gamesDone(gamesDone), 
+playerLocation({4, 1}) 
 {
-    // The players starting location is ALWAYS (4,1)
-    playerLocation.x = 4;
-    playerLocation.y = 1;
-
-    lastPlayerMovement = millis();
 }
 
 void EscapeMap::run()
@@ -132,7 +132,7 @@ void EscapeMap::displayUpdate(byte mapLeft[], byte mapRight[], int playerMapLoca
   lcd.setCursor(4, 0);
   lcd.print(gamesFinished);
   lcd.print('/');
-  lcd.print(4);
+  lcd.print(2); // Probably should not say 3 as the third minigame is the exit
 
   lcd.setCursor(5, 1);
   lcd.write(0);
@@ -149,7 +149,7 @@ void EscapeMap::moveLeft() {
             case 3: if (!gamesDone.gameOneDone) status = inGame1; break;
             case 4: if (!gamesDone.gameTwoDone) status = inGame2; break;
             case 5: if (!gamesDone.gameThreeDone) status = inGame3; break;
-            case 6: if (!gamesDone.gameFourDone) status = inGame4; break;
+            // case 6: if (!gamesDone.gameFourDone) status = inGame4; break;
             default: status = inMap; break;
         }
     }
@@ -165,7 +165,7 @@ void EscapeMap::moveRight() {
             case 3: if (!gamesDone.gameOneDone) status = inGame1; break;
             case 4: if (!gamesDone.gameTwoDone) status = inGame2; break;
             case 5: if (!gamesDone.gameThreeDone) status = inGame3; break;
-            case 6: if (!gamesDone.gameFourDone) status = inGame4; break;
+            // case 6: if (!gamesDone.gameFourDone) status = inGame4; break;
             default: status = inMap; break;
         }
     }
@@ -181,7 +181,7 @@ void EscapeMap::moveUp() {
             case 3: if (!gamesDone.gameOneDone) status = inGame1; break;
             case 4: if (!gamesDone.gameTwoDone) status = inGame2; break;
             case 5: if (!gamesDone.gameThreeDone) status = inGame3; break;
-            case 6: if (!gamesDone.gameFourDone) status = inGame4; break;
+            // case 6: if (!gamesDone.gameFourDone) status = inGame4; break;
             default: status = inMap; break;
         }
     }
@@ -197,7 +197,7 @@ void EscapeMap::moveDown() {
             case 3: if (!gamesDone.gameOneDone) status = inGame1; break;
             case 4: if (!gamesDone.gameTwoDone) status = inGame2; break;
             case 5: if (!gamesDone.gameThreeDone) status = inGame3; break;
-            case 6: if (!gamesDone.gameFourDone) status = inGame4; break;
+            // case 6: if (!gamesDone.gameFourDone) status = inGame4; break;
             default: status = inMap; break;
         }
     }

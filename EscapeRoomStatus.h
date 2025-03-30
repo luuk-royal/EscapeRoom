@@ -9,7 +9,8 @@ enum EscapeRoomStatus {
   inGame3 = 3,
   inGame4 = 4,
   startingScreen = 5,
-  endingScreen = 6
+  endingScreen = 6,
+  gameOverScreen = 7
 };
 
 struct GamesDone
