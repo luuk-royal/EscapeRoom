@@ -1,11 +1,13 @@
 #include <TM1638plus.h>
 #include <LiquidCrystal_I2C.h>
-#include "EscapeRoomStatus.h"
+#include "EscapeRoomStates.h"
 #include "ButtonWrapper.h"
 #include "Music.h"
 #include "EscapeMap.h"
 #include "BalanceGame.h"
 #include "WhackAMole.h"
+// #include "MazeGame.h"
+// #include "ParcourGame.h"
 
 #define STB 13
 #define CLK 12
@@ -25,7 +27,12 @@
 
 int lastMilis = 0;
 EscapeRoomStatus status = startingScreen;
-bool started = false;
+// 5 minutes
+int totalTime = 300000;
+// Only start counting down once the startEscapeRoom function has been gone through
+int startingMillis = 0;
+bool hasEnded = false;
+int timeLeft;
 
 GamesDone gamesDone;
 
@@ -34,16 +41,17 @@ TM1638plus tm(STB, CLK, DIO);
 ButtonWrapper buttons(tm);
 Music music(BUZZER);
 EscapeMap escapeMap(lcd, buttons, status, gamesDone);
-BalanceGame gameOne(POTMETER, LED_RRR, LED_RR, LED_GR, LED_YC, LED_GL, LED_RL, LED_RLL, status, gamesDone, lcd);
+BalanceGame gameOne(POTMETER, LED_RRR, LED_RR, LED_GR, LED_YC, LED_GL, LED_RL, LED_RLL, status, gamesDone, lcd, buttons);
 WhackAMole gameTwo(tm, buttons, status, gamesDone);
+// ParcourGame gameThree(lcd, buttons, status, gamesDone);
+// MazeGame gameFour(lcd, buttons, status, gamesDone);
 
 void startEscapeRoom() {
-  Serial.println("In startEscapeRoom!");
+  // Serial.println("In startEscapeRoom!");
   status = inMap;
   escapeMap.setup();
-
-  // Run the updateMap manually as the map itself only updates on movement.
-  escapeMap.updateMap();
+  
+  startingMillis = millis();
 }
 
 void setup(void)
@@ -59,14 +67,11 @@ void setup(void)
   lcd.print("4-bytes-saga");
   lcd.setCursor(5, 1);
   lcd.print(">Start");
-  
-  // Setup game one
-  gameOne.setUp();
 }
 
 void loop() {
   buttons.updateButtons();
-  // music.PlayMusic();
+  music.PlayMusic();
 
 
   ButtonState buttonState = buttons.getButtonsState();
@@ -81,6 +86,16 @@ void loop() {
     break;
     case inMap:
       escapeMap.run();
+
+      // Time mechanic and game over mechanic
+      lcd.setCursor(10, 0);
+      lcd.print("time:");
+      lcd.setCursor(13, 1);
+      lcd.print((totalTime - (millis() - startingMillis)) / 1000);
+
+      if (((totalTime - (millis() - startingMillis)) / 1000) < 0) {
+        status = gameOverScreen;
+      }
       break;
     case inGame1:
       gameOne.run();
@@ -89,10 +104,32 @@ void loop() {
       gameTwo.run();
       break;
     case inGame3:
-      status = inMap;
+      // todo: make this the running game
+      // gameFour.run();
       break;
-    case inGame4:
-      status = inMap;
+    // case inGame4:
+    //   gameFour.run();
+      break;
+    case endingScreen:
+      if (!hasEnded)
+      {
+        hasEnded = true;
+        timeLeft = ((totalTime - (millis() - startingMillis)) / 1000);
+      }
+      
+
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("You have won!");
+      lcd.setCursor(0, 1);
+      lcd.print("Time left:");
+      lcd.print(timeLeft);
+      break;
+    case gameOverScreen:
+      lcd.setCursor(0, 0);
+      lcd.print("You have ran out");
+      lcd.setCursor(0,1);
+      lcd.print("of time!");
       break;
   }
 }

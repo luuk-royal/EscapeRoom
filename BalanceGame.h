@@ -3,26 +3,28 @@
 #define BALANCE_GAME_H
 
 #include <Arduino.h>
-#include "EscapeRoomStatus.h"
+#include "EscapeRoomStates.h"
 #include <LiquidCrystal_I2C.h>
+#include "ButtonWrapper.h"
+#include "IGame.h"
 
-class BalanceGame
+class BalanceGame: public IGame
 {
 public:
     BalanceGame(
-        int potmeter, 
-        int Led_RRR, 
-        int Led_RR, 
-        int Led_GR, 
-        int Led_YC, 
-        int Led_GL, 
-        int Led_RL, 
+        int potmeter,
+        int Led_RRR,
+        int Led_RR,
+        int Led_GR,
+        int Led_YC,
+        int Led_GL,
+        int Led_RL,
         int Led_RLL,
         EscapeRoomStatus &status,
         GamesDone &gamesDone,
-        LiquidCrystal_I2C &lcd
+        LiquidCrystal_I2C &lcd,
+        ButtonWrapper &buttons
     );
-    void setUp();
     void run();
 private:
     int POTMETER;
@@ -39,11 +41,17 @@ private:
     int lastTimed;
     EscapeRoomStatus &status;
     GamesDone &gamesDone;
+    GameState currentState;
     LiquidCrystal_I2C &lcd;
+    ButtonWrapper &buttons;
     int startTimer;
 
-    void gameFailed();
+    bool setUpTextDone = false;
+
+    void setup();
+    void running();
     void gameDone();
+    void gameFailed();
 };
 
 #endif // BALANCE_GAME_H
