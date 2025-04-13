@@ -132,7 +132,7 @@ void EscapeMap::displayUpdate(byte mapLeft[], byte mapRight[], int playerMapLoca
   lcd.setCursor(4, 0);
   lcd.print(gamesFinished);
   lcd.print('/');
-  lcd.print(4);
+  lcd.print(3); // The fourth game is the exit maze so we do not count it
 
   lcd.setCursor(5, 1);
   lcd.write(0);

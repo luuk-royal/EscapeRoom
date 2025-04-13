@@ -46,7 +46,7 @@ private:
     ButtonWrapper &buttons;
     int startTimer;
 
-    bool setUpTextDone = false;
+    bool setUpTextDone;
 
     void setup();
     void running();

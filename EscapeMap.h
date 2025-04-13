@@ -4,7 +4,7 @@
 
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
-#include "EscapeRoomStatus.h"
+#include "EscapeRoomStates.h"
 #include "ButtonWrapper.h"
 
 // https://forum.arduino.cc/t/explaination-of-struct/676032/9
@@ -47,6 +47,8 @@ private:
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
     };
 
+    // Character maker:
+    // https://maxpromer.github.io/LCD-Character-Creator/
     byte leftMiniMap[8] = {
         0B11111,
         0B10000,

@@ -4,25 +4,53 @@
 
 #include <Arduino.h>
 #include <TM1638plus.h>
-#include "EscapeRoomStatus.h"
+#include "EscapeRoomStates.h"
 #include "ButtonWrapper.h"
+#include "IGame.h"
 
-class WhackAMole
+struct Mole
 {
 public:
-    WhackAMole(TM1638plus &tm, ButtonWrapper &buttons, EscapeRoomStatus &status, GamesDone &gamesDone);
+    unsigned long moleTimer;
+    unsigned long moleLastActionTime;
+    unsigned long moleCooldownTime;
+    MoleStatus state;
+};
+
+
+class WhackAMole: public IGame
+{
+public:
+    WhackAMole(
+        TM1638plus &tm,
+        ButtonWrapper &buttons,
+        EscapeRoomStatus &status,
+        GamesDone &gamesDone,
+        LiquidCrystal_I2C &lcd,
+        ButtonWrapper &buttons
+    );
     void run();
 private:
-    int difficultyLevel;
+    DifficultyLevel difficultyLevel;
+    GameState currentState;
     int points;
-
     TM1638plus &tm;
     ButtonWrapper &buttons;
     EscapeRoomStatus &status;
     GamesDone &gamesDone;
+    LiquidCrystal_I2C &lcd;
+    ButtonWrapper &buttons;
 
-    void gameDone();
+    bool setUpTextDone;
+
+    void setActiveTime(Mole& mole, int ledNumber);
+    void endMole(Mole& mole, int ledNumber);
+    void resetCooldown(Mole& mole);
     int randomCooldown();
+
+    void setup();
+    void running();
+    void gameDone();
 };
 
 #endif // WHACKAMOLE_H

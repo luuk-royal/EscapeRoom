@@ -24,10 +24,10 @@ BalanceGame::BalanceGame(
     status(status),
     gamesDone(gamesDone),
     lcd(lcd),
-    buttons(buttons)
+    buttons(buttons),
+    currentState(initializing),
+    setUpTextDone(false)
 {
-    // Set the initial state
-    currentState = initializing;
 }
 
 void BalanceGame::setup()
