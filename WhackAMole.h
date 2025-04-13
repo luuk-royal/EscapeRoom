@@ -24,7 +24,7 @@ public:
     WhackAMole(
         TM1638plus &tm,
         ButtonWrapper &buttons,
-        EscapeRoomStatus &status,
+        EscapeRoomStatus &globalStatus,
         GamesDone &gamesDone,
         LiquidCrystal_I2C &lcd
     );
@@ -35,7 +35,7 @@ private:
     int points;
     TM1638plus &tm;
     ButtonWrapper &buttons;
-    EscapeRoomStatus &status;
+    EscapeRoomStatus &globalStatus;
     GamesDone &gamesDone;
     LiquidCrystal_I2C &lcd;
 

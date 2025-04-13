@@ -6,12 +6,12 @@ Mole moles[8];
 WhackAMole::WhackAMole(
     TM1638plus &tm,
     ButtonWrapper &buttons,
-    EscapeRoomStatus &status,
+    EscapeRoomStatus &globalStatus,
     GamesDone &gamesDone,
     LiquidCrystal_I2C &lcd
     ) : tm(tm),
     buttons(buttons),
-    status(status),
+    globalStatus(globalStatus),
     gamesDone(gamesDone),
     lcd(lcd),
     currentState(initializing),
@@ -175,7 +175,7 @@ void WhackAMole::gameDone() {
     if (buttons.getButtonState(1))
     {
         // Tell the main loop to start running the map code again
-        status = inMap;
+        globalStatus = inMap;
 
         // Set this game to done
         gamesDone.gameTwoDone = true;

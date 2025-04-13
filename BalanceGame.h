@@ -20,7 +20,7 @@ public:
         int Led_GL,
         int Led_RL,
         int Led_RLL,
-        EscapeRoomStatus &status,
+        EscapeRoomStatus &globalStatus,
         GamesDone &gamesDone,
         LiquidCrystal_I2C &lcd,
         ButtonWrapper &buttons
@@ -39,7 +39,7 @@ private:
     unsigned long lastMoveTime;
     int startingTime = -1;
     int lastTimed;
-    EscapeRoomStatus &status;
+    EscapeRoomStatus &globalStatus;
     GamesDone &gamesDone;
     GameState currentState;
     LiquidCrystal_I2C &lcd;

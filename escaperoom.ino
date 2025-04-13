@@ -26,7 +26,7 @@
 #define FREQUENCY 440
 
 int lastMilis = 0;
-EscapeRoomStatus status = startingScreen;
+EscapeRoomStatus globalStatus = startingScreen;
 // 5 minutes
 int totalTime = 300000;
 // Only start counting down once the startEscapeRoom function has been gone through
@@ -40,15 +40,15 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 TM1638plus tm(STB, CLK, DIO);
 ButtonWrapper buttons(tm);
 Music music(BUZZER);
-EscapeMap escapeMap(lcd, buttons, status, gamesDone);
+EscapeMap escapeMap(lcd, buttons, globalStatus, gamesDone);
 BalanceGame gameOne(POTMETER, LED_RRR, LED_RR, LED_GR, LED_YC, LED_GL, LED_RL, LED_RLL, status, gamesDone, lcd, buttons);
-WhackAMole gameTwo(tm, buttons, status, gamesDone, lcd);
-// ParcourGame gameThree(lcd, buttons, status, gamesDone);
-// MazeGame gameFour(lcd, buttons, status, gamesDone);
+WhackAMole gameTwo(tm, buttons, globalStatus, gamesDone, lcd);
+// ParcourGame gameThree(lcd, buttons, globalStatus, gamesDone);
+// MazeGame gameFour(lcd, buttons, globalStatus, gamesDone);
 
 void startEscapeRoom() {
   // Serial.println("In startEscapeRoom!");
-  status = inMap;
+  globalStatus = inMap;
   escapeMap.setup();
   
   startingMillis = millis();
@@ -76,7 +76,7 @@ void loop() {
 
   ButtonState buttonState = buttons.getButtonsState();
 
-  switch (status) {
+  switch (globalStatus) {
     case startingScreen:
       if (buttons.getButtonState(1))
       {
@@ -94,7 +94,7 @@ void loop() {
       lcd.print((totalTime - (millis() - startingMillis)) / 1000);
 
       if (((totalTime - (millis() - startingMillis)) / 1000) < 0) {
-        status = gameOverScreen;
+        globalStatus = gameOverScreen;
       }
       break;
     case inGame1:

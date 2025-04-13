@@ -9,7 +9,7 @@ BalanceGame::BalanceGame(
     int Led_GL, 
     int Led_RL, 
     int Led_RLL, 
-    EscapeRoomStatus &status,
+    EscapeRoomStatus &globalStatus,
     GamesDone &gamesDone,
     LiquidCrystal_I2C &lcd,
     ButtonWrapper &buttons
@@ -21,7 +21,7 @@ BalanceGame::BalanceGame(
     LED_GL(Led_GL), 
     LED_RL(Led_RL), 
     LED_RLL(Led_RLL),
-    status(status),
+    globalStatus(globalStatus),
     gamesDone(gamesDone),
     lcd(lcd),
     buttons(buttons),
@@ -203,7 +203,7 @@ void BalanceGame::gameDone() {
     if (buttons.getButtonState(1))
     {
         // Tell the main loop to start running the map code again
-        status = inMap;
+        globalStatus = inMap;
 
         // Set this game to done
         gamesDone.gameOneDone = true;
