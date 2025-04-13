@@ -42,7 +42,7 @@ ButtonWrapper buttons(tm);
 Music music(BUZZER);
 EscapeMap escapeMap(lcd, buttons, status, gamesDone);
 BalanceGame gameOne(POTMETER, LED_RRR, LED_RR, LED_GR, LED_YC, LED_GL, LED_RL, LED_RLL, status, gamesDone, lcd, buttons);
-WhackAMole gameTwo(tm, buttons, status, gamesDone);
+WhackAMole gameTwo(tm, buttons, status, gamesDone, lcd);
 // ParcourGame gameThree(lcd, buttons, status, gamesDone);
 // MazeGame gameFour(lcd, buttons, status, gamesDone);
 
