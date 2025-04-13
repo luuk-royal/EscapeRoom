@@ -26,8 +26,7 @@ public:
         ButtonWrapper &buttons,
         EscapeRoomStatus &status,
         GamesDone &gamesDone,
-        LiquidCrystal_I2C &lcd,
-        ButtonWrapper &buttons
+        LiquidCrystal_I2C &lcd
     );
     void run();
 private:
@@ -39,7 +38,6 @@ private:
     EscapeRoomStatus &status;
     GamesDone &gamesDone;
     LiquidCrystal_I2C &lcd;
-    ButtonWrapper &buttons;
 
     bool setUpTextDone;
 

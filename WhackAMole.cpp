@@ -8,14 +8,12 @@ WhackAMole::WhackAMole(
     ButtonWrapper &buttons,
     EscapeRoomStatus &status,
     GamesDone &gamesDone,
-    LiquidCrystal_I2C &lcd,
-    ButtonWrapper &buttons
+    LiquidCrystal_I2C &lcd
     ) : tm(tm),
     buttons(buttons),
     status(status),
     gamesDone(gamesDone),
     lcd(lcd),
-    buttons(buttons),
     currentState(initializing),
     setUpTextDone(false)
 {
